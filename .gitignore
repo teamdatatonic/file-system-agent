@@ -1,0 +1,40 @@
+# Python ignores
+__pycache__/
+*.py[cod]
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Byte-compiled / optimized / DLL files
+*.pyc
+*.pyo
+*.pyd
+
+# macOS
+.DS_Store
+
+# Poetry / Virtualenv
+.venv/
+.venv/*
+/poetry.lock
+/.cache
+
+# Tests
+.pytest_cache/
+coverage/
+coverage.html
+
+# Logs
+*.log
+*.out
+*.err
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+*.bak
+
+# Your local config
+.env
