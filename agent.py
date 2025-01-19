@@ -2,12 +2,13 @@
 
 import sys
 import uuid
+import json
 from typing import Annotated, Dict, List, Any
 from typing_extensions import TypedDict
 
 from langchain_anthropic import ChatAnthropic
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.messages import BaseMessage
+from langchain_core.messages import BaseMessage, AIMessage, ToolMessage
 from langchain_core.runnables import Runnable
 from langchain_core.tools import tool
 
@@ -61,7 +62,7 @@ system_prompt = ChatPromptTemplate.from_messages([
         15. path_info => get metadata about a path
 
         ---------------------------------------------------------------
-        **What “organizing a messy directory” means**:
+        **What "organizing a messy directory" means**:
         - You might list or walk the directory to see current files and subfolders.
         - Then create needed subdirectories (e.g., 'PDFs', 'Images', etc.).
         - Then move/rename files into place (like converting doc1.PDF => doc1.pdf).
@@ -150,7 +151,7 @@ if __name__ == "__main__":
     config = {"configurable": {"thread_id": session_id}}
 
     while True:
-        user_text = input("\nYou: ").strip()
+        user_text = input("\n[User] ").strip()
         
         if user_text.lower() in ["exit", "quit"]:
             print("Goodbye!")
@@ -165,16 +166,25 @@ if __name__ == "__main__":
         for evt in events:
             if "messages" in evt:
                 message = evt["messages"][-1]
-                # If it's a user message, skip printing
+                
+                # Skip user messages
                 if hasattr(message, "type") and message.type == "user":
                     continue
-                # If it's an assistant message
-                if hasattr(message, "content"):
-                    print(f"Assistant: {message.content}")
-                elif isinstance(message, dict):
-                    # Possibly a tool response
-                    if message.get("type") == "tool_response":
-                        print(f"[Tool Result: {message.get('output', 'No output')}]")
-                    else:
-                        print(f"Assistant: {message.get('content', message.get('text', str(message)))}")
+                    
+                # Handle AIMessage
+                if isinstance(message, AIMessage):
+                    # Skip if content is a list (tool use message)
+                    if isinstance(message.content, list):
+                        continue
+                    print(f"[Assistant] {message.content}")
+                
+                # Handle ToolMessage
+                elif isinstance(message, ToolMessage):
+                    try:
+                        result = json.loads(message.content)
+                        if isinstance(result, dict) and "result" in result:
+                            print(f"[Tool] {result['result']}")
+                    except:
+                        print(f"[Tool] {message.content}")
+                
                 print("-"*60)
