@@ -38,3 +38,6 @@ coverage.html
 
 # Your local config
 .env
+
+# Example directory
+example/

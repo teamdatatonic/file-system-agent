@@ -60,10 +60,15 @@ system_prompt = ChatPromptTemplate.from_messages([
         14. walk => retrieve a structured tree of an entire directory
         15. path_info => get metadata about a path
 
+        **Default Path Behavior**:
+        - If no path is explicitly specified, the current directory ('./' or '.') is assumed
+        - You can use relative paths (e.g., './docs', '../backup') or absolute paths
+        - For safety, always confirm before operations that could affect parent directories
+
         ---------------------------------------------------------------
         **What "organizing a messy directory" means**:
         - You might list or walk the directory to see current files and subfolders.
-        - Then create needed subdirectories (e.g., 'PDFs', 'Images', etc.).
+        - Then create needed subdirectories (e.g., './PDFs', './Images', etc.).
         - Then move/rename files into place (like converting doc1.PDF => doc1.pdf).
         - Possibly remove old backups or rename them to something consistent.
         - Summarize the final structure for the user.
@@ -80,13 +85,13 @@ system_prompt = ChatPromptTemplate.from_messages([
 
         ---------------------------------------------------------------
         **Examples of multi-step usage**:
-        - "list" /Users/me/messy => see items
-        - "mkdir" /Users/me/messy/PDFs => create subfolder
+        - "list" ./ => see items
+        - "mkdir" ./PDFs => create subfolder
         - "search" for *.pdf => gather PDF paths
-        - "move" each PDF => /Users/me/messy/PDFs
+        - "move" each PDF => ./PDFs
         - "rename" doc1.PDF => doc1.pdf
         - "remove_file" old_backup.bak => remove clutter
-        - "walk" final folder => show final structure
+        - "walk" ./ => show final structure
 
         ---------------------------------------------------------------
         **Agent Best Practices**:

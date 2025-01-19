@@ -230,6 +230,11 @@ def filesystem_tool(
     A robust, multi-action filesystem tool for local file operations. 
     You must specify an 'action' from the list below, plus the necessary arguments.
 
+    Default Path Behavior:
+    - If no path is explicitly specified, the current directory ('./' or '.') is assumed
+    - You can use relative paths (e.g., './docs', '../backup') or absolute paths
+    - For safety, always confirm before operations that could affect parent directories
+
     Actions:
     1) "list" => List items in a directory.
        - Required: path (directory to list)
@@ -237,7 +242,7 @@ def filesystem_tool(
        Example:
          filesystem_tool(
             action='list',
-            path='/home/user/docs',
+            path='./docs',
             include_hidden=False
          )
 
@@ -248,7 +253,7 @@ def filesystem_tool(
          filesystem_tool(
             action='search',
             pattern='*.md',
-            search_root='/project/src',
+            search_root='./src',
             include_hidden=True
          )
 
@@ -257,7 +262,7 @@ def filesystem_tool(
        Example:
          filesystem_tool(
             action='read',
-            path='/home/user/docs/notes.txt'
+            path='./docs/notes.txt'
          )
 
     4) "write" => Write (overwrite or append) text content to a file.
@@ -268,7 +273,7 @@ def filesystem_tool(
        Example:
          filesystem_tool(
             action='write',
-            path='/home/user/docs/new.txt',
+            path='./docs/new.txt',
             content='Hello, World!',
             overwrite=False
          )
@@ -279,7 +284,7 @@ def filesystem_tool(
        Example:
          filesystem_tool(
             action='grep',
-            path='/var/log/syslog',
+            path='./logs/syslog',
             search_text='error',
             case_insensitive=True
          )
@@ -296,7 +301,7 @@ def filesystem_tool(
          filesystem_tool(
             action='resolve',
             path='requirements.txt',
-            search_root='/path/to/project',
+            search_root='.',
             return_first_only=True
          )
 
@@ -308,7 +313,7 @@ def filesystem_tool(
        Example:
          filesystem_tool(
             action='mkdir',
-            path='/tmp/my_new_dir',
+            path='./my_new_dir',
             exist_ok=True,
             parents=True
          )
@@ -318,7 +323,7 @@ def filesystem_tool(
        Example:
          filesystem_tool(
             action='rmdir',
-            path='/tmp/old_dir'
+            path='./old_dir'
          )
 
     10) "remove_file" => Remove a single file.
@@ -326,7 +331,7 @@ def filesystem_tool(
         Example:
           filesystem_tool(
             action='remove_file',
-            path='/tmp/some_file.txt'
+            path='./some_file.txt'
           )
 
     11) "rename" => Rename or move a file/directory from 'path' to 'dst'.
@@ -334,8 +339,8 @@ def filesystem_tool(
         Example:
           filesystem_tool(
             action='rename',
-            path='/home/user/draft.doc',
-            dst='/home/user/final.docx'
+            path='./draft.doc',
+            dst='./final.docx'
           )
 
     12) "move" => Move a file or directory from 'src' to 'dst'.
@@ -343,8 +348,8 @@ def filesystem_tool(
         Example:
           filesystem_tool(
             action='move',
-            src='/home/user/downloads/old.zip',
-            dst='/home/user/archive/old_backup.zip'
+            src='./downloads/old.zip',
+            dst='./archive/old_backup.zip'
           )
 
     13) "copy" => Copy a file or directory from 'src' to 'dst'.
@@ -353,8 +358,8 @@ def filesystem_tool(
         Example:
           filesystem_tool(
             action='copy',
-            src='/home/user/docs',
-            dst='/home/user/backup/docs_copy',
+            src='./docs',
+            dst='./backup/docs_copy',
             is_dir=True
           )
 
@@ -364,7 +369,7 @@ def filesystem_tool(
         Example:
           filesystem_tool(
             action='walk',
-            path='/home/user/project',
+            path='.',
             include_hidden=False
           )
 
@@ -373,7 +378,7 @@ def filesystem_tool(
         Example:
           filesystem_tool(
             action='path_info',
-            path='/home/user/docs/file.txt'
+            path='./docs/file.txt'
           )
 
     Return format for each action:
@@ -391,8 +396,8 @@ def filesystem_tool(
 
     Examples of multi-step usage:
       1) "list" a directory, then "move" a file based on the listing.
-      2) "search" for all "*.pdf", then "copy" them into a "PDFs" folder.
-      3) "walk" a directory to visualize structure, then "mkdir" subfolders 
+      2) "search" for all "*.pdf", then "copy" them into a "./PDFs" folder.
+      3) "walk" the current directory to visualize structure, then "mkdir" subfolders 
          to reorganize files, and "rename" them consistently.
 
     Overall: This tool centralizes all filesystem operations in a single function with an 'action' parameter.
