@@ -1,10 +1,15 @@
 import os
 
-# LLM Configuration
+# Anthropic
 LLM_MODEL_NAME = "claude-3-5-sonnet-20240620"
-LLM_MODEL_TEMPERATURE = 0
-
-# API Keys
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
-DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
+
+# OpenAI
+# LLM_MODEL_NAME = "gpt-4o"
+# OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+# DeepSeek
+# LLM_MODEL_NAME = "deepseek-chat"
+# DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
+
+

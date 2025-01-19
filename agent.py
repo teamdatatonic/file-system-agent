@@ -21,8 +21,7 @@ from langgraph.prebuilt import ToolNode, tools_condition
 from tool import filesystem_tool
 
 # Import config
-from config import LLM_MODEL_NAME, LLM_MODEL_TEMPERATURE
-from config import ANTHROPIC_API_KEY
+from config import LLM_MODEL_NAME, ANTHROPIC_API_KEY
 
 ##########################################
 # 1) Prepare State, Tools and LLM
@@ -36,7 +35,7 @@ all_tools = [filesystem_tool]
 
 llm = ChatAnthropic(
     model=LLM_MODEL_NAME, 
-    temperature=LLM_MODEL_TEMPERATURE, 
+    temperature=0, 
     api_key=ANTHROPIC_API_KEY
 )
 
@@ -145,13 +144,13 @@ agent_graph = graph_builder.compile(checkpointer=memory)
 ##########################################
 
 if __name__ == "__main__":
-    print("Welcome to the FileSystemAgent! Type 'exit' or 'quit' to stop.\n")
+    print("Welcome to the File System Agent! Type 'exit' or 'quit' to stop.\n")
     
     session_id = str(uuid.uuid4())
     config = {"configurable": {"thread_id": session_id}}
 
     while True:
-        user_text = input("\n[User] ").strip()
+        user_text = input("\n[User]: ").strip()
         
         if user_text.lower() in ["exit", "quit"]:
             print("Goodbye!")
@@ -176,15 +175,15 @@ if __name__ == "__main__":
                     # Skip if content is a list (tool use message)
                     if isinstance(message.content, list):
                         continue
-                    print(f"[Assistant] {message.content}")
+                    print(f"[Assistant]: {message.content}")
                 
                 # Handle ToolMessage
                 elif isinstance(message, ToolMessage):
                     try:
                         result = json.loads(message.content)
                         if isinstance(result, dict) and "result" in result:
-                            print(f"[Tool] {result['result']}")
+                            print(f"[Tool]: {result['result']}")
                     except:
-                        print(f"[Tool] {message.content}")
+                        print(f"[Tool]: {message.content}")
                 
                 print("-"*60)
