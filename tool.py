@@ -399,9 +399,7 @@ def filesystem_tool(
     Usage Notes:
       - Always check the docstring or help text for what arguments are required.
       - If a required argument is missing or invalid, you'll get an "error" with a descriptive message.
-      - For multi-step tasks like organizing or cleaning up a messy directory, plan each step carefully 
-        (e.g., list => mkdir => move => rename => remove_file) and confirm with the user if there's any risk.
-      - Summarize or parse the "result" field to provide user-friendly output.
+      - Be highly highly concrete and concise in your answers, just deliver what's asked.
 
     Examples of multi-step usage:
       1) "list" a directory, then "move" a file based on the listing.
