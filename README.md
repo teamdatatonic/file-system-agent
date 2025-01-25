@@ -1,6 +1,6 @@
-# FileSystemAgent
+# A Powerful File System Tool (for llm function calling)
 
-A LangChain-based agent that provides intelligent file system operations through natural language.
+A file system navigation tool for agent to use via llm function calling.
 
 ## Setup
 
