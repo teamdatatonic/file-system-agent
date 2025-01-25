@@ -13,6 +13,7 @@ langchain-community = "^0.3.14"
 langchain-anthropic = "^0.3.3"
 pydantic = "^2.10.3"
 langgraph = "^0.2.64"
+rich = "^13.7.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.4"

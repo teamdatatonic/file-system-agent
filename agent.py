@@ -8,7 +8,7 @@ from typing_extensions import TypedDict
 
 from langchain_anthropic import ChatAnthropic
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.messages import BaseMessage, AIMessage, ToolMessage
+from langchain_core.messages import BaseMessage, AIMessage, ToolMessage, HumanMessage
 from langchain_core.runnables import Runnable
 from langchain_core.tools import tool
 
@@ -59,47 +59,36 @@ system_prompt = ChatPromptTemplate.from_messages([
         13. copy => copy a file or directory from 'src' -> 'dst'
         14. walk => retrieve a structured tree of an entire directory
         15. path_info => get metadata about a path
+        16. pwd => print working directory (get current directory path)
 
-        **Default Path Behavior**:
-        - If no path is explicitly specified, the current directory ('./' or '.') is assumed
-        - You can use relative paths (e.g., './docs', '../backup') or absolute paths
-        - For safety, always confirm before operations that could affect parent directories
 
-        ---------------------------------------------------------------
-        **What "organizing a messy directory" means**:
-        - You might list or walk the directory to see current files and subfolders.
-        - Then create needed subdirectories (e.g., './PDFs', './Images', etc.).
-        - Then move/rename files into place (like converting doc1.PDF => doc1.pdf).
-        - Possibly remove old backups or rename them to something consistent.
-        - Summarize the final structure for the user.
+        ===== Answer Formatting Guidelines =====
+        1. always be highly highly concrete and concise in your answers.
+        2. if you read content of a file, don't print out the content of the file to the user (it'd flood the logs)
+        3. before removing or moving a file, always first get a yes/no confirmation from the user.
+        
+        ===== Capabilities ======
+        ## 1. Directory Organization Instructions**:
 
-        **How to go about it**:
-        1) Plan your re-organization steps with the user (which subfolders to create, naming conventions, etc.).
-        2) Use the appropriate tool actions: 
-        - "list" or "walk" to understand structure,
-        - "mkdir" to create new folders,
-        - "move"/"rename" for rearranging or standardizing names,
-        - "remove_file" or "rmdir" for discarding old items,
-        - confirm potential data loss or big changes with the user.
-        3) Provide short summaries of tool results.
+        If user asks: "please organize the documents/forms folder"
 
-        ---------------------------------------------------------------
-        **Examples of multi-step usage**:
-        - "list" ./ => see items
-        - "mkdir" ./PDFs => create subfolder
-        - "search" for *.pdf => gather PDF paths
-        - "move" each PDF => ./PDFs
-        - "rename" doc1.PDF => doc1.pdf
-        - "remove_file" old_backup.bak => remove clutter
-        - "walk" ./ => show final structure
-
-        ---------------------------------------------------------------
-        **Agent Best Practices**:
-        - Only call filesystem_tool if you need to do an actual operation (avoid loops).
-        - Summarize after each action, e.g. "Moved X items to PDFs folder."
-        - If an error occurs, gracefully inform the user.
-        - Confirm any major destructive steps like removing files or emptying directories.
-
+        Step1: create sibling 'organized_[<target_directory_name>]/' directory (sibiling to the target directory):
+           
+           example1: Target: '/documents/forms/'  →  Create: '/documents/organized_[forms]/'
+           example2: Target: './src/old/'        →  Create: './src/organized_[old]/'
+           
+        Step2: Copy files to sibling directory:
+        example:
+           FROM: './src/old/Form.pdf'
+           TO:   './src/organized_[old]/pdf/Form1234_OLD_CLIENTS.pdf'
+           
+        Step3: Standardize in organized/:
+           - Lowercase with underscores
+           - Group by type: pdfs/, docs/, etc.
+        example:
+           FROM: './src/organized_[old]/pdf/Form1234_OLD_CLIENTS.pdf'
+           TO:   './src/organized_[old]/pdf/form_1234_old_clients.pdf'
+        
         End of instructions.
         """
     ),
@@ -148,6 +137,27 @@ agent_graph = graph_builder.compile(checkpointer=memory)
 # 5) Example Interactive Loop
 ##########################################
 
+def print_message(message):
+    if isinstance(message, AIMessage):
+        if isinstance(message.content, list):
+            # For tool calls, just show the tool being called
+            for item in message.content:
+                if isinstance(item, dict) and item.get("type") == "tool_use":
+                    print(f"Tool Call: {item.get('name')}({item.get('input', {})})")
+        else:
+            # For regular responses
+            print(f"Assistant: {message.content}")
+    elif isinstance(message, ToolMessage):
+        try:
+            # Try to pretty print JSON responses
+            result = json.loads(message.content)
+            print(f"Tool Result: {result}")
+        except:
+            print(f"Tool Result: {message.content}")
+    # elif isinstance(message, HumanMessage):
+        # print(f"\nHuman: {message.content}")
+    print("-" * 80)
+
 if __name__ == "__main__":
     print("Welcome to the File System Agent! Type 'exit' or 'quit' to stop.\n")
     
@@ -155,7 +165,7 @@ if __name__ == "__main__":
     config = {"configurable": {"thread_id": session_id}}
 
     while True:
-        user_text = input("\n[User]: ").strip()
+        user_text = input("Human: ").strip()
         
         if user_text.lower() in ["exit", "quit"]:
             print("Goodbye!")
@@ -164,31 +174,9 @@ if __name__ == "__main__":
         if not user_text:
             continue
 
-        # Stream or run the graph with the new user message
         events = agent_graph.stream({"messages": [("user", user_text)]}, config, stream_mode="values")
 
         for evt in events:
             if "messages" in evt:
                 message = evt["messages"][-1]
-                
-                # Skip user messages
-                if hasattr(message, "type") and message.type == "user":
-                    continue
-                    
-                # Handle AIMessage
-                if isinstance(message, AIMessage):
-                    # Skip if content is a list (tool use message)
-                    if isinstance(message.content, list):
-                        continue
-                    print(f"[Assistant]: {message.content}")
-                
-                # Handle ToolMessage
-                elif isinstance(message, ToolMessage):
-                    try:
-                        result = json.loads(message.content)
-                        if isinstance(result, dict) and "result" in result:
-                            print(f"[Tool]: {result['result']}")
-                    except:
-                        print(f"[Tool]: {message.content}")
-                
-                print("-"*60)
+                print_message(message)

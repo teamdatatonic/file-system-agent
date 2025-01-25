@@ -334,6 +334,12 @@ def test_path_info_missing_path():
     assert result["status"] == "error"
     assert "missing 'path' argument" in result["result"].lower()
 
+def test_pwd_success():
+    """Test that pwd returns the current working directory."""
+    result = filesystem_tool.invoke({"action": "pwd"})
+    assert result["status"] == "success"
+    assert result["result"] == str(Path.cwd())
+
 def test_invalid_action():
     # Provide an unknown action
     result = filesystem_tool.invoke({"action": "invalid_action_name"})

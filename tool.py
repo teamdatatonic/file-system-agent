@@ -204,6 +204,10 @@ def _path_info(path: Path) -> Dict[str, Any]:
     }
     return info
 
+def _get_pwd() -> str:
+    """Return the current working directory."""
+    return str(Path.cwd())
+
 ###############################################################################
 # Primary Function
 ###############################################################################
@@ -381,6 +385,11 @@ def filesystem_tool(
             path='./docs/file.txt'
           )
 
+    16) "pwd" => Print working directory (get current directory path).
+        - No arguments needed
+        Example:
+          filesystem_tool(action='pwd')
+
     Return format for each action:
       {
         "status": "success" or "error",
@@ -510,11 +519,15 @@ def filesystem_tool(
             info = _path_info(Path(path))
             return {"status": "success", "result": info}
 
+        elif action == "pwd":
+            cwd = _get_pwd()
+            return {"status": "success", "result": cwd}
+
         else:
             raise ValueError(
                 f"Unknown action: '{action}'. Must be one of: "
                 "'list', 'search', 'read', 'write', 'grep', 'uuid', 'resolve', "
-                "'mkdir', 'rmdir', 'remove_file', 'rename', 'move', 'copy', 'walk', 'path_info'."
+                "'mkdir', 'rmdir', 'remove_file', 'rename', 'move', 'copy', 'walk', 'path_info', 'pwd'."
             )
         # --- ACTION HANDLER END ---
 
