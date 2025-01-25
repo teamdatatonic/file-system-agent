@@ -404,8 +404,8 @@ def filesystem_tool(
     Examples of multi-step usage:
       1) "list" a directory, then "move" a file based on the listing.
       2) "search" for all "*.pdf", then "copy" them into a "./PDFs" folder.
-      3) "walk" the current directory to visualize structure, then "mkdir" subfolders 
-         to reorganize files, and "rename" them consistently.
+      3) "tree" the current directory to visualize structure, "mkdir" a new folder, then "copy" files to a new folder.
+      etc
 
     Overall: This tool centralizes all filesystem operations in a single function with an 'action' parameter.
     """

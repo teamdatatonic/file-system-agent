@@ -72,7 +72,7 @@ system_prompt = ChatPromptTemplate.from_messages([
 
         If user asks: "please organize the documents/forms folder"
 
-        Step1: create sibling 'organized_[<target_directory_name>]/' directory (sibiling to the target directory):
+        Step1: create a sibling to the target directory named 'organized_[<target_directory_name>]/':
            
            example1: Target: '/documents/forms/'  →  Create: '/documents/organized_[forms]/'
            example2: Target: './src/old/'        →  Create: './src/organized_[old]/'
