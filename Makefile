@@ -21,25 +21,42 @@ clean:
 
 # 5) Example: Create a messy directory structure
 example-build:
-	@echo "Creating messy directory structure..."
-	@mkdir -p example/messy/{"01_stuff/IMPORTANT docs","Downloads/pictures","My Documents/FINAL","notes","random_stuff123/old","temp/Temporary Files"}
-	@echo "just some random notes\nTODO: organize this later\nremember to check this\nIMPORTANT!!! don't forget about the meeting" > "example/messy/01_stuff/random.txt"
-	@echo "VERY IMPORTANT DOCUMENT\nDO NOT DELETE\nLast updated: 2023-12-01\n\nThis document contains critical information that needs to be organized better." > "example/messy/01_stuff/IMPORTANT docs/doc1.PDF"
-	@echo "Draft version 1\nNeed to review this\nStatus: In Progress\nAuthor: John\nDate: 2023-11-15" > "example/messy/My Documents/FINAL/final_v1.doc"
-	@echo "# TODOs\n\n- [ ] organize files\n- [x] backup important stuff\n* clean up downloads folder\n- URGENT: review documents\n* maybe delete old files?\n\n## Random Notes\n- check this later\n- important meeting on Friday" > "example/messy/notes/todo.md"
-	@touch "example/messy/Downloads/img1.PNG" \
-		"example/messy/Downloads/IMG2.png" \
-		"example/messy/Downloads/pictures/screenshot 2024.png" \
-		"example/messy/01_stuff/IMPORTANT docs/Doc2.pdf" \
-		"example/messy/My Documents/FINAL/FINAL_V2.DOC" \
-		"example/messy/My Documents/FINAL/final_FINAL_v3.docx" \
-		"example/messy/My Documents/draft.TXT" \
-		"example/messy/notes/TODOs.MD" \
-		"example/messy/random_stuff123/backup.bak" \
-		"example/messy/random_stuff123/old/archive.zip" \
-		"example/messy/temp/temp.tmp" \
-		"example/messy/temp/Temporary Files/delete_me.txt"
-	@echo "✨ Messy directory structure created successfully!"
+	@echo "Creating messy insurance company directory structure..."
+	@mkdir -p "example/messy/Client_Files/Active_Claims" \
+		"example/messy/Client_Files/Archived (2023)" \
+		"example/messy/Forms & Templates/Policy_Forms" \
+		"example/messy/Forms & Templates/Claims Forms" \
+		"example/messy/Internal Documents/Meeting Notes" \
+		"example/messy/Internal Documents/Procedures" \
+		"example/messy/Scanned Documents/Pending Review" \
+		"example/messy/Email Attachments/To Process" \
+		"example/messy/Reports/Monthly/2024" \
+		"example/messy/Training Materials/New Employee"
+	
+	@echo "CLAIM FORM - AUTO ACCIDENT\nDate: 2024-01-15\nClaim #: AC-2024-0123\nStatus: Pending Review\nClient: John Smith\nPolicy #: POL-789-012" > "example/messy/Client_Files/Active_Claims/Smith_J_Claim_2024-01.pdf"
+	@echo "Meeting Minutes - Claims Review\nDate: 2024-02-01\nAttendees: Sarah, Mike, Jennifer\nAction Items:\n- Follow up on Smith claim\n- Update policy templates\n- Schedule client interviews" > "example/messy/Internal Documents/Meeting Notes/claims_review_feb2024.docx"
+	@echo "Standard Operating Procedure\nLast Updated: 2023-12-15\nDepartment: Claims Processing\nVersion: 2.3\n\nPROCEDURE STEPS:\n1. Verify policy status\n2. Review claim documentation\n3. Assess coverage eligibility" > "example/messy/Internal Documents/Procedures/Claims_Processing_SOP_v2.3.doc"
+	@echo "TO: claims@insurance.com\nFROM: client@email.com\nSUBJECT: Additional Documentation\n\nPlease find attached the requested medical records and repair estimates." > "example/messy/Email Attachments/To Process/FW_Additional_Docs_Smith_Case.eml"
+	@echo "Monthly Claims Summary\nPeriod: January 2024\n\nTotal Claims: 45\nApproved: 32\nPending: 8\nDenied: 5\n\nTotal Payout: $123,456.78" > "example/messy/Reports/Monthly/2024/January_Claims_Summary_DRAFT.xlsx"
+
+	@touch \
+		"example/messy/Forms & Templates/Policy_Forms/Auto_Insurance_Application_2024.pdf" \
+		"example/messy/Forms & Templates/Policy_Forms/Home_Insurance_Application_2024.pdf" \
+		"example/messy/Forms & Templates/Claims Forms/Medical_Claim_Form_v3.pdf" \
+		"example/messy/Forms & Templates/Claims Forms/Property_Damage_Form_2024.pdf" \
+		"example/messy/Client_Files/Active_Claims/URGENT_Johnson_Medical_Claim.pdf" \
+		"example/messy/Client_Files/Active_Claims/Williams_Property_Photos.zip" \
+		"example/messy/Client_Files/Archived (2023)/Brown_Claim_Settled.pdf" \
+		"example/messy/Scanned Documents/Pending Review/Medical_Records_Smith.pdf" \
+		"example/messy/Scanned Documents/Pending Review/Repair_Estimate_Johnson.pdf" \
+		"example/messy/Internal Documents/Meeting Notes/team_meeting_notes_old.doc" \
+		"example/messy/Internal Documents/Meeting Notes/quarterly_review_2023Q4.pptx" \
+		"example/messy/Training Materials/New Employee/onboarding_checklist.pdf" \
+		"example/messy/Training Materials/New Employee/claims_processing_guide.pdf" \
+		"example/messy/Email Attachments/To Process/Client_Statement_Brown.doc" \
+		"example/messy/Reports/Monthly/2024/Claims_Analysis_JAN24_v2_FINAL.xlsx"
+
+	@echo "✨ Insurance company directory structure created successfully!"
 
 example-clean:
 	@echo "Cleaning up messy directory..."
