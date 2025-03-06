@@ -6,7 +6,7 @@ import json
 from typing import Annotated, Dict, List, Any
 from typing_extensions import TypedDict
 
-from langchain_anthropic import ChatAnthropic
+from langchain_google_vertexai import ChatVertexAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import BaseMessage, AIMessage, ToolMessage, HumanMessage
 from langchain_core.runnables import Runnable
@@ -21,7 +21,7 @@ from langgraph.prebuilt import ToolNode, tools_condition
 from tool import filesystem_tool
 
 # Import config
-from config import LLM_MODEL_NAME, ANTHROPIC_API_KEY
+from config import LLM_MODEL_NAME, GOOGLE_CLOUD_PROJECT
 
 ##########################################
 # 1) Prepare State, Tools and LLM
@@ -31,19 +31,20 @@ from config import LLM_MODEL_NAME, ANTHROPIC_API_KEY
 class FileSystemState(TypedDict):
     messages: Annotated[List[BaseMessage], add_messages]
 
+
 all_tools = [filesystem_tool]
 
-llm = ChatAnthropic(
-    model=LLM_MODEL_NAME, 
-    temperature=0, 
-    api_key=ANTHROPIC_API_KEY
+llm = ChatVertexAI(
+    model_name=LLM_MODEL_NAME,
+    temperature=0,
+    project=GOOGLE_CLOUD_PROJECT,
 )
 
-system_prompt = ChatPromptTemplate.from_messages([
-    (
-        "system",
-        
-        """You are a FileSystemAgent with these capabilities (via filesystem_tool(action=...)):
+system_prompt = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            """You are a FileSystemAgent with these capabilities (via filesystem_tool(action=...)):
         1. list => list items in a directory
         2. search => search for files by pattern under a root
         3. read => read text content of a file
@@ -90,10 +91,11 @@ system_prompt = ChatPromptTemplate.from_messages([
            TO:   './src/organized_[old]/pdf/form_1234_old_clients.pdf'
         
         End of instructions.
-        """
-    ),
-    ("placeholder", "{messages}")
-])
+        """,
+        ),
+        ("placeholder", "{messages}"),
+    ]
+)
 
 llm_with_tools = llm.bind_tools(all_tools)
 
@@ -101,11 +103,13 @@ llm_with_tools = llm.bind_tools(all_tools)
 # 3) Define Chat Node
 ##########################################
 
+
 def chatbot(state: FileSystemState) -> Dict[str, List[BaseMessage]]:
     """Process user messages, optionally call filesystem_tool, then return new response."""
     messages = state["messages"]
     response = llm_with_tools.invoke(messages)
     return {"messages": [response]}
+
 
 ##########################################
 # 4) Build the Graph
@@ -137,6 +141,7 @@ agent_graph = graph_builder.compile(checkpointer=memory)
 # 5) Example Interactive Loop
 ##########################################
 
+
 def print_message(message):
     if isinstance(message, AIMessage):
         if isinstance(message.content, list):
@@ -155,26 +160,29 @@ def print_message(message):
         except:
             print(f"Tool Result: {message.content}")
     # elif isinstance(message, HumanMessage):
-        # print(f"\nHuman: {message.content}")
+    # print(f"\nHuman: {message.content}")
     print("-" * 80)
+
 
 if __name__ == "__main__":
     print("Welcome to the File System Agent! Type 'exit' or 'quit' to stop.\n")
-    
+
     session_id = str(uuid.uuid4())
     config = {"configurable": {"thread_id": session_id}}
 
     while True:
         user_text = input("Human: ").strip()
-        
+
         if user_text.lower() in ["exit", "quit"]:
             print("Goodbye!")
             sys.exit(0)
-            
+
         if not user_text:
             continue
 
-        events = agent_graph.stream({"messages": [("user", user_text)]}, config, stream_mode="values")
+        events = agent_graph.stream(
+            {"messages": [("user", user_text)]}, config, stream_mode="values"
+        )
 
         for evt in events:
             if "messages" in evt:
