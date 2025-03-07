@@ -10,7 +10,7 @@ package-mode = false
 python = ">=3.12,<3.13"
 langchain = "^0.3.14"
 langchain-community = "^0.3.14"
-langchain-anthropic = "^0.3.3"
+langchain-google-vertexai = "^2.0.14"
 pydantic = "^2.10.3"
 langgraph = "^0.2.64"
 rich = "^13.7.1"
